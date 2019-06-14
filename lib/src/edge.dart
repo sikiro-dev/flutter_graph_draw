@@ -1,0 +1,142 @@
+import 'package:flutter/material.dart';
+import 'package:geometry/geometry.dart';
+import 'package:flutter_graph_draw/src/node.dart';
+import 'package:flutter_graph_draw/src/paragraph_painter.dart';
+import 'package:flutter_graph_draw/src/edge_painter.dart';
+import 'dart:ui' as ui;
+
+enum EdgeType { Straight, Curved }
+
+class Edge extends StatelessWidget {
+  final Node source;
+  final Node target;
+  final double arrowWidth;
+  final double ratio;
+  final EdgeType edgeType;
+  final Color color;
+  final ui.Paragraph paragraph;
+  final Alignment alignment;
+  final double padding;
+
+  Edge(
+      {@required this.source,
+      @required this.target,
+      this.arrowWidth = 0.0,
+      this.ratio = 10.0,
+      this.edgeType = EdgeType.Straight,
+      this.color = Colors.black,
+      this.paragraph,
+      this.alignment = Alignment.centerRight,
+      this.padding = 10.0})
+      : assert(source != null),
+        assert(ratio >= 10.0 && ratio <= 50.0),
+        assert(arrowWidth >= 0.0),
+        assert(target != null);
+
+  Rectangle get rectangle =>
+      Rectangle(firstEdge: source.center, secondEdge: target.center);
+
+  Arrow get edge {
+    Point start;
+    Point targetCenter;
+    if (source.center <= target.center) {
+      start = Point(0.0, 0.0);
+      targetCenter = Point(rectangle.width, rectangle.heigth);
+    } else if (source.center >= target.center) {
+      start = Point(rectangle.width, rectangle.heigth);
+      targetCenter = Point(0.0, 0.0);
+    } else if (source.center.wider(target.center)) {
+      start = Point(rectangle.width, 0.0);
+      targetCenter = Point(0.0, rectangle.heigth);
+    } else {
+      start = Point(0.0, rectangle.heigth);
+      targetCenter = Point(rectangle.width, 0.0);
+    }
+    Point mid;
+    Point tip;
+    Shape body;
+    Point end;
+    List<Point> arrowTale;
+
+    switch (edgeType) {
+      case EdgeType.Straight:
+        {
+          mid = start.midpoint(targetCenter);
+          tip = mid.closer(Line.fromPoints(pointA: start, pointB: mid)
+              .intersec(Circle(center: targetCenter, radius: target.radius)));
+          body = Line.fromPoints(pointA: start, pointB: tip);
+          end = mid.closer((body as Line).intersec(Circle(
+              center: targetCenter,
+              radius: target.radius + arrowWidth + 0.001)));
+          arrowTale = (body as Line)
+              .perpendicular(end)
+              .atDistanceFromPoint(end, (arrowWidth + 0.001) / 2);
+        }
+        break;
+      case EdgeType.Curved:
+        {
+          mid = Point.clockwise(
+              start,
+              targetCenter,
+              Line.fromPoints(pointA: start, pointB: targetCenter)
+                  .perpendicular(start.midpoint(targetCenter))
+                  .atDistanceFromPoint(start.midpoint(targetCenter),
+                      start.distanceTo(targetCenter) / ratio),
+              reversed: source.center.wider(target.center) &&
+                  target.center.higher(source.center));
+          tip = mid.closer(Circle.fromTreePoints(
+                  pointA: start, pointB: mid, pointC: targetCenter)
+              .intersect(Circle(center: targetCenter, radius: target.radius)));
+          body = Circle.fromTreePoints(
+              pointA: start, pointB: mid, pointC: targetCenter);
+          end = mid.closer((body as Circle).intersect(Circle(
+              center: targetCenter, radius: target.radius + arrowWidth)));
+          arrowTale =
+              Line.fromPoints(pointA: end, pointB: (body as Circle).center)
+                  .atDistanceFromPoint(end, arrowWidth / 2.0);
+        }
+        break;
+      default:
+    }
+
+    return Arrow(
+        start: start,
+        end: end,
+        mid: mid,
+        body: body,
+        left: arrowTale[0],
+        rigth: arrowTale[1],
+        tip: tip);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final actualEdge = edge;
+    return Stack(
+      overflow: Overflow.visible,
+      children: <Widget>[
+        CustomPaint(
+          painter: EdgePainter(
+              edge: actualEdge, color: color, hasLabel: paragraph != null),
+          size: Size(rectangle.width, rectangle.heigth),
+        ),
+        paragraph != null
+            ? Positioned(
+                top: actualEdge.mid.y -
+                    paragraph.height / 2.0 +
+                    paragraph.height / 2.0 * alignment.y +
+                    padding * alignment.y,
+                left: actualEdge.mid.x -
+                    paragraph.width / 2.0 +
+                    paragraph.width / 2.0 * alignment.x +
+                    padding * alignment.x,
+                child: CustomPaint(
+                  painter: ParagraphPainter(paragraph: paragraph),
+                  size: Size(paragraph.width, paragraph.height),
+                ),
+              )
+            : Container(),
+      ],
+    );
+  }
+}

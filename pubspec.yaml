@@ -1,0 +1,23 @@
+name: flutter_graph_draw
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geometry:
+    git: https://dlmauri:db7633c414fe78a6578ba892834a0547cc9b163f@github.com/dlmauri/geometry
+
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
