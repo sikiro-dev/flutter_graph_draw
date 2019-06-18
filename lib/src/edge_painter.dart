@@ -2,6 +2,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:geometry/geometry.dart';
 
+///extends CustomPainter and draw an edge
+///
+///[edge] is the edge to be drawn
+///[color] is his color
+///[strokeWidth] tje width of his body
+///[hasLabel] true only if the edge has a label
 class EdgePainter extends CustomPainter {
   final Arrow edge;
   final Color color;

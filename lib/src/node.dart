@@ -3,13 +3,21 @@ import 'dart:ui' as ui;
 import 'package:flutter_graph_draw/src/paragraph_painter.dart';
 import 'package:geometry/geometry.dart';
 
+///rapresent a single node of the graph
+///
+///[x] and [y] are they offset from top and left
+///[radius] is the radius of the node
+///[paragraph] is the optional label of the node
+///[alignment] is the alignment of the paragraph
+///[padding] is the alignment of the paragraph
+///[builder] is the builder if the node
 class Node extends StatelessWidget {
   final double x;
   final double y;
   final double radius;
-  final ui.Paragraph label;
+  final ui.Paragraph paragraph;
   final Alignment alignment;
-  final double padding;
+  final EdgeInsets padding;
   final WidgetBuilder builder;
 
   Node(
@@ -18,12 +26,11 @@ class Node extends StatelessWidget {
       @required this.radius,
       this.builder,
       this.alignment = Alignment.centerRight,
-      this.label,
-      this.padding = 0.0})
+      this.paragraph,
+      this.padding = const EdgeInsets.all(2.0)})
       : assert(x != null),
         assert(y != null),
-        assert(radius != null),
-        assert(padding >= 0.0);
+        assert(radius != null);
 
   Point get center => Point(x + radius, y + radius);
 
@@ -38,21 +45,21 @@ class Node extends StatelessWidget {
           decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
           child: builder == null ? Container() : builder(context),
         ),
-        label != null
+        paragraph != null
             ? Positioned(
                 top: alignment.y * radius +
-                    padding * alignment.y +
+                    padding.top * alignment.y +
                     radius -
-                    label.height / 2.0 -
-                    label.height / 2.0 * alignment.y,
+                    paragraph.height / 2.0 -
+                    paragraph.height / 2.0 * alignment.y,
                 left: alignment.x * radius +
-                    padding * alignment.x +
+                    padding.left * alignment.x +
                     radius -
-                    label.width / 2.0 +
-                    label.width / 2.0 * alignment.x,
+                    paragraph.width / 2.0 +
+                    paragraph.width / 2.0 * alignment.x,
                 child: CustomPaint(
-                  size: Size(label.width, label.height),
-                  painter: ParagraphPainter(paragraph: label),
+                  size: Size(paragraph.width, paragraph.height),
+                  painter: ParagraphPainter(paragraph: paragraph),
                 ),
               )
             : Container(),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_graph_draw/src/node.dart';
 import 'package:flutter_graph_draw/src/edge.dart';
-import 'dart:ui' as ui;
 
+///rapresent a Graph
+///
+///[nodes] are the nodes of the graph
+///[edges] are the edges of the graph
 class Graph extends StatelessWidget {
   final List<Node> nodes;
   final List<Edge> edges;

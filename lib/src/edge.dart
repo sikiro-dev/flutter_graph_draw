@@ -7,6 +7,17 @@ import 'dart:ui' as ui;
 
 enum EdgeType { Straight, Curved }
 
+///this is an Edge of the graph
+///
+///[source] is the source node
+///[target] is the target node
+///[arrowWidth] is the width of the arrow (set to 0.0 for non_directed graphs)
+///[ratio] is the curvature of the edge, it go from 10 to 50, only taken into consideration if [edgeType] is Curved
+///[edgeType] can be Curved or Straight
+///[color] is the color of the edge
+///[paragraph] the edge can have a label attached on his center
+///[alignment] is the aligment of the paragraph
+///[padding] is the padding of the paragraph
 class Edge extends StatelessWidget {
   final Node source;
   final Node target;
@@ -16,7 +27,7 @@ class Edge extends StatelessWidget {
   final Color color;
   final ui.Paragraph paragraph;
   final Alignment alignment;
-  final double padding;
+  final EdgeInsets padding;
 
   Edge(
       {@required this.source,
@@ -27,7 +38,7 @@ class Edge extends StatelessWidget {
       this.color = Colors.black,
       this.paragraph,
       this.alignment = Alignment.centerRight,
-      this.padding = 10.0})
+      this.padding = const EdgeInsets.all(2.0)})
       : assert(source != null),
         assert(ratio >= 10.0 && ratio <= 50.0),
         assert(arrowWidth >= 0.0),
@@ -125,11 +136,11 @@ class Edge extends StatelessWidget {
                 top: actualEdge.mid.y -
                     paragraph.height / 2.0 +
                     paragraph.height / 2.0 * alignment.y +
-                    padding * alignment.y,
+                    padding.top * alignment.y,
                 left: actualEdge.mid.x -
                     paragraph.width / 2.0 +
                     paragraph.width / 2.0 * alignment.x +
-                    padding * alignment.x,
+                    padding.left * alignment.x,
                 child: CustomPaint(
                   painter: ParagraphPainter(paragraph: paragraph),
                   size: Size(paragraph.width, paragraph.height),
