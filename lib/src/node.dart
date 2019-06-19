@@ -75,9 +75,12 @@ class _NodeState extends State<Node> with TickerProviderStateMixin {
           child: Container(
             height: radius * 2.0,
             width: radius * 2.0,
-            decoration:
-                BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-            child: builder == null ? Container() : builder(context),
+            child: builder == null
+                ? Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.blue),
+                  )
+                : builder(context),
           ),
         ),
         paragraph != null
