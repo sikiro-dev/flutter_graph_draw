@@ -18,7 +18,7 @@ enum EdgeType { Straight, Curved }
 ///[paragraph] the edge can have a label attached on his center
 ///[alignment] is the aligment of the paragraph
 ///[padding] is the padding of the paragraph
-class Edge extends StatelessWidget {
+class Edge extends StatefulWidget {
   final Node source;
   final Node target;
   final double arrowWidth;
@@ -48,34 +48,37 @@ class Edge extends StatelessWidget {
       Rectangle(firstEdge: source.center, secondEdge: target.center);
 
   Arrow get edge {
-    Point start;
+    Point sourceCenter;
     Point targetCenter;
     if (source.center <= target.center) {
-      start = Point(0.0, 0.0);
+      sourceCenter = Point(0.0, 0.0);
       targetCenter = Point(rectangle.width, rectangle.heigth);
     } else if (source.center >= target.center) {
-      start = Point(rectangle.width, rectangle.heigth);
+      sourceCenter = Point(rectangle.width, rectangle.heigth);
       targetCenter = Point(0.0, 0.0);
     } else if (source.center.wider(target.center)) {
-      start = Point(rectangle.width, 0.0);
+      sourceCenter = Point(rectangle.width, 0.0);
       targetCenter = Point(0.0, rectangle.heigth);
     } else {
-      start = Point(0.0, rectangle.heigth);
+      sourceCenter = Point(0.0, rectangle.heigth);
       targetCenter = Point(rectangle.width, 0.0);
     }
     Point mid;
     Point tip;
     Shape body;
     Point end;
+    Point start;
     List<Point> arrowTale;
 
     switch (edgeType) {
       case EdgeType.Straight:
         {
-          mid = start.midpoint(targetCenter);
-          tip = mid.closer(Line.fromPoints(pointA: start, pointB: mid)
+          mid = sourceCenter.midpoint(targetCenter);
+          tip = mid.closer(Line.fromPoints(pointA: sourceCenter, pointB: mid)
               .intersec(Circle(center: targetCenter, radius: target.radius)));
-          body = Line.fromPoints(pointA: start, pointB: tip);
+          body = Line.fromPoints(pointA: sourceCenter, pointB: tip);
+          start = mid.closer((body as Line)
+              .intersec(Circle(center: sourceCenter, radius: source.radius)));
           end = mid.closer((body as Line).intersec(Circle(
               center: targetCenter,
               radius: target.radius + arrowWidth + 0.001)));
@@ -87,19 +90,21 @@ class Edge extends StatelessWidget {
       case EdgeType.Curved:
         {
           mid = Point.clockwise(
-              start,
+              sourceCenter,
               targetCenter,
-              Line.fromPoints(pointA: start, pointB: targetCenter)
-                  .perpendicular(start.midpoint(targetCenter))
-                  .atDistanceFromPoint(start.midpoint(targetCenter),
-                      start.distanceTo(targetCenter) / ratio),
+              Line.fromPoints(pointA: sourceCenter, pointB: targetCenter)
+                  .perpendicular(sourceCenter.midpoint(targetCenter))
+                  .atDistanceFromPoint(sourceCenter.midpoint(targetCenter),
+                      sourceCenter.distanceTo(targetCenter) / ratio),
               reversed: source.center.wider(target.center) &&
                   target.center.higher(source.center));
           tip = mid.closer(Circle.fromTreePoints(
-                  pointA: start, pointB: mid, pointC: targetCenter)
+                  pointA: sourceCenter, pointB: mid, pointC: targetCenter)
               .intersect(Circle(center: targetCenter, radius: target.radius)));
           body = Circle.fromTreePoints(
-              pointA: start, pointB: mid, pointC: targetCenter);
+              pointA: sourceCenter, pointB: mid, pointC: targetCenter);
+          start = mid.closer((body as Circle)
+              .intersect(Circle(center: sourceCenter, radius: source.radius)));
           end = mid.closer((body as Circle).intersect(Circle(
               center: targetCenter, radius: target.radius + arrowWidth)));
           arrowTale =
@@ -121,15 +126,59 @@ class Edge extends StatelessWidget {
   }
 
   @override
+  _EdgeState createState() => _EdgeState();
+}
+
+class _EdgeState extends State<Edge> with TickerProviderStateMixin {
+  Node source;
+  Node target;
+  double arrowWidth;
+  double ratio;
+  EdgeType edgeType;
+  Color color;
+  ui.Paragraph paragraph;
+  Alignment alignment;
+  EdgeInsets padding;
+  AnimationController controller;
+  Animation<double> animation;
+  double _fraction;
+
+  @override
+  void initState() {
+    super.initState();
+    source = widget.source;
+    target = widget.target;
+    arrowWidth = widget.arrowWidth;
+    ratio = widget.ratio;
+    edgeType = widget.edgeType;
+    color = widget.color;
+    paragraph = widget.paragraph;
+    alignment = widget.alignment;
+    padding = widget.padding;
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller)
+      ..addListener(() {
+        setState(() {
+          _fraction = animation.value;
+        });
+      });
+    controller.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final actualEdge = edge;
+    final actualEdge = widget.edge;
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
         CustomPaint(
           painter: EdgePainter(
-              edge: actualEdge, color: color, hasLabel: paragraph != null),
-          size: Size(rectangle.width, rectangle.heigth),
+              fraction: _fraction,
+              edge: actualEdge,
+              color: color,
+              hasLabel: paragraph != null),
+          size: Size(widget.rectangle.width, widget.rectangle.heigth),
         ),
         paragraph != null
             ? Positioned(
@@ -141,9 +190,12 @@ class Edge extends StatelessWidget {
                     paragraph.width / 2.0 +
                     paragraph.width / 2.0 * alignment.x +
                     padding.left * alignment.x,
-                child: CustomPaint(
-                  painter: ParagraphPainter(paragraph: paragraph),
-                  size: Size(paragraph.width, paragraph.height),
+                child: FadeTransition(
+                  opacity: animation,
+                  child: CustomPaint(
+                    painter: ParagraphPainter(paragraph: paragraph),
+                    size: Size(paragraph.width, paragraph.height),
+                  ),
                 ),
               )
             : Container(),
