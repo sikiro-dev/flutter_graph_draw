@@ -48,6 +48,7 @@ class _NodeState extends State<Node> with TickerProviderStateMixin {
   WidgetBuilder builder;
   AnimationController controller;
   Animation<double> animation;
+  double _fraction;
 
   @override
   initState() {
@@ -61,7 +62,12 @@ class _NodeState extends State<Node> with TickerProviderStateMixin {
     builder = widget.builder;
     controller = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
-    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
+    animation = CurveTween(curve: Curves.bounceInOut).animate(controller)
+      ..addListener(() {
+        setState(() {
+          _fraction = animation.value;
+        });
+      });
     controller.forward();
   }
 
@@ -70,18 +76,15 @@ class _NodeState extends State<Node> with TickerProviderStateMixin {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
-        FadeTransition(
-          opacity: animation,
-          child: Container(
-            height: radius * 2.0,
-            width: radius * 2.0,
-            child: builder == null
-                ? Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.blue),
-                  )
-                : builder(context),
-          ),
+        Container(
+          height: radius * 2.0 * _fraction,
+          width: radius * 2.0 * _fraction,
+          child: builder == null
+              ? Container(
+                  decoration:
+                      BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
+                )
+              : builder(context),
         ),
         paragraph != null
             ? Positioned(
