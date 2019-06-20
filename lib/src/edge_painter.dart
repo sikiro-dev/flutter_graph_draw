@@ -40,7 +40,7 @@ class EdgePainter extends CustomPainter {
       Offset(edge.rigth.x, edge.rigth.y),
       Offset(edge.left.x, edge.left.y)
     ], true);
-    canvas.drawPath(path, paintFill);
+    if (fraction >= 1.0) canvas.drawPath(path, paintFill);
     if (hasLabel && fraction >= .5)
       canvas.drawCircle(Offset(edge.mid.x, edge.mid.y), 4.0, paintFill);
     edge.body is Circle
