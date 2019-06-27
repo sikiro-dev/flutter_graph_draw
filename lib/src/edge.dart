@@ -157,7 +157,7 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
     padding = widget.padding;
     fraction = 0.0;
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
+        duration: const Duration(milliseconds: 2500), vsync: this);
     animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
       ..addListener(() {
         setState(() {
