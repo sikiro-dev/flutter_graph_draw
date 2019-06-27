@@ -157,13 +157,13 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
     padding = widget.padding;
     controller = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller)
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
       ..addListener(() {
         setState(() {
           fraction = animation.value;
         });
       });
-    controller.forward(from: 0.0);
+    controller.forward();
   }
 
   @override
