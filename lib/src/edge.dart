@@ -156,7 +156,7 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
     alignment = widget.alignment;
     padding = widget.padding;
     controller = AnimationController(
-        duration: const Duration(milliseconds: 30000), vsync: this);
+        duration: const Duration(milliseconds: 1000), vsync: this);
     animation = Tween(begin: 0.0, end: 1.0).animate(controller)
       ..addListener(() {
         setState(() {
