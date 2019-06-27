@@ -15,13 +15,13 @@ class EdgePainter extends CustomPainter {
   final bool hasLabel;
   final double fraction;
 
-  EdgePainter({
-    @required this.edge,
-    this.color = Colors.black,
-    this.strokeWidth = 3.0,
-    this.hasLabel = false,
-    this.fraction = 0.0,
-  }) : assert(edge != null);
+  EdgePainter(
+      {@required this.edge,
+      this.color = Colors.black,
+      this.strokeWidth = 3.0,
+      this.hasLabel = false,
+      this.fraction})
+      : assert(edge != null);
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
