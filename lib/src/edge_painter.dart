@@ -20,7 +20,7 @@ class EdgePainter extends CustomPainter {
     this.color = Colors.black,
     this.strokeWidth = 3.0,
     this.hasLabel = false,
-    this.fraction,
+    this.fraction = 0.0,
   }) : assert(edge != null);
 
   @override
