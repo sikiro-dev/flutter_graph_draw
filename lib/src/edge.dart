@@ -141,7 +141,7 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
   EdgeInsets padding;
   AnimationController controller;
   Animation<double> animation;
-  double _fraction;
+  double fraction;
 
   @override
   void initState() {
@@ -160,7 +160,7 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
     animation = Tween(begin: 0.0, end: 1.0).animate(controller)
       ..addListener(() {
         setState(() {
-          _fraction = animation.value;
+          fraction = animation.value;
         });
       });
     controller.forward(from: 0.0);
@@ -174,7 +174,7 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
       children: <Widget>[
         CustomPaint(
           painter: EdgePainter(
-              fraction: _fraction,
+              fraction: fraction,
               edge: actualEdge,
               color: color,
               hasLabel: paragraph != null),
