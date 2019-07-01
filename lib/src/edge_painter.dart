@@ -13,13 +13,15 @@ class EdgePainter extends CustomPainter {
   final Color color;
   final double strokeWidth;
   final bool hasLabel;
+  final double fraction;
 
-  EdgePainter({
-    @required this.edge,
-    this.color = Colors.black,
-    this.strokeWidth = 3.0,
-    this.hasLabel = false,
-  }) : assert(edge != null);
+  EdgePainter(
+      {@required this.edge,
+      this.color = Colors.black,
+      this.strokeWidth = 3.0,
+      this.hasLabel = false,
+      this.fraction})
+      : assert(edge != null);
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
@@ -38,8 +40,8 @@ class EdgePainter extends CustomPainter {
       Offset(edge.rigth.x, edge.rigth.y),
       Offset(edge.left.x, edge.left.y)
     ], true);
-    canvas.drawPath(path, paintFill);
-    if (hasLabel)
+    if (fraction >= 1.0) canvas.drawPath(path, paintFill);
+    if (hasLabel && fraction >= .5)
       canvas.drawCircle(Offset(edge.mid.x, edge.mid.y), 4.0, paintFill);
     edge.body is Circle
         ? canvas.drawArc(
@@ -48,11 +50,14 @@ class EdgePainter extends CustomPainter {
                     (edge.body as Circle).center.y),
                 radius: (edge.body as Circle).radius),
             edge.start.angleOnCircle(edge.body),
-            (edge.body as Circle).arc(edge.start, edge.end),
+            (edge.body as Circle).arc(edge.start, edge.end) * fraction,
             false,
             paintStroke)
-        : canvas.drawLine(Offset(edge.start.x, edge.start.y),
-            Offset(edge.end.x, edge.end.y), paintStroke);
+        : canvas.drawLine(
+            Offset(edge.start.x, edge.start.y),
+            Offset(edge.start.x * (1.0 - fraction) + edge.end.x,
+                edge.start.y * (1.0 - fraction) + edge.end.y),
+            paintStroke);
   }
 
   @override
