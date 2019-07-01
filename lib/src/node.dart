@@ -11,7 +11,7 @@ import 'package:geometry/geometry.dart';
 ///[alignment] is the alignment of the paragraph
 ///[padding] is the alignment of the paragraph
 ///[builder] is the builder if the node
-class Node extends StatefulWidget {
+class Node extends StatelessWidget {
   final double x;
   final double y;
   final double radius;
@@ -35,53 +35,19 @@ class Node extends StatefulWidget {
   Point get center => Point(x + radius, y + radius);
 
   @override
-  _NodeState createState() => _NodeState();
-}
-
-class _NodeState extends State<Node> with TickerProviderStateMixin {
-  double x;
-  double y;
-  double radius;
-  ui.Paragraph paragraph;
-  Alignment alignment;
-  EdgeInsets padding;
-  WidgetBuilder builder;
-  AnimationController controller;
-  Animation<double> animation;
-
-  @override
-  initState() {
-    super.initState();
-    x = widget.x;
-    y = widget.y;
-    radius = widget.radius;
-    paragraph = widget.paragraph;
-    alignment = widget.alignment;
-    padding = widget.padding;
-    builder = widget.builder;
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
-    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn);
-    controller.forward();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
-        FadeTransition(
-          opacity: animation,
-          child: Container(
-            height: radius * 2.0,
-            width: radius * 2.0,
-            child: builder == null
-                ? Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.blue),
-                  )
-                : builder(context),
-          ),
+        Container(
+          height: radius * 2.0,
+          width: radius * 2.0,
+          child: builder == null
+              ? Container(
+                  decoration:
+                      BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
+                )
+              : builder(context),
         ),
         paragraph != null
             ? Positioned(
@@ -95,12 +61,9 @@ class _NodeState extends State<Node> with TickerProviderStateMixin {
                     radius -
                     paragraph.width / 2.0 +
                     paragraph.width / 2.0 * alignment.x,
-                child: FadeTransition(
-                  opacity: animation,
-                  child: CustomPaint(
-                    size: Size(paragraph.width, paragraph.height),
-                    painter: ParagraphPainter(paragraph: paragraph),
-                  ),
+                child: CustomPaint(
+                  size: Size(paragraph.width, paragraph.height),
+                  painter: ParagraphPainter(paragraph: paragraph),
                 ),
               )
             : Container(),

@@ -18,7 +18,7 @@ enum EdgeType { Straight, Curved }
 ///[paragraph] the edge can have a label attached on his center
 ///[alignment] is the aligment of the paragraph
 ///[padding] is the padding of the paragraph
-class Edge extends StatefulWidget {
+class Edge extends StatelessWidget {
   final Node source;
   final Node target;
   final double arrowWidth;
@@ -126,60 +126,15 @@ class Edge extends StatefulWidget {
   }
 
   @override
-  _EdgeState createState() => _EdgeState();
-}
-
-class _EdgeState extends State<Edge> with TickerProviderStateMixin {
-  Node source;
-  Node target;
-  double arrowWidth;
-  double ratio;
-  EdgeType edgeType;
-  Color color;
-  ui.Paragraph paragraph;
-  Alignment alignment;
-  EdgeInsets padding;
-  AnimationController controller;
-  Animation<double> animation;
-  double fraction;
-
-  @override
-  void initState() {
-    super.initState();
-    source = widget.source;
-    target = widget.target;
-    arrowWidth = widget.arrowWidth;
-    ratio = widget.ratio;
-    edgeType = widget.edgeType;
-    color = widget.color;
-    paragraph = widget.paragraph;
-    alignment = widget.alignment;
-    padding = widget.padding;
-    fraction = 0.0;
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 2500), vsync: this);
-    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
-      ..addListener(() {
-        setState(() {
-          fraction = animation.value;
-        });
-      });
-    controller.forward();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final actualEdge = widget.edge;
+    final actualEdge = edge;
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
         CustomPaint(
           painter: EdgePainter(
-              fraction: fraction,
-              edge: actualEdge,
-              color: color,
-              hasLabel: paragraph != null),
-          size: Size(widget.rectangle.width, widget.rectangle.heigth),
+              edge: actualEdge, color: color, hasLabel: paragraph != null),
+          size: Size(rectangle.width, rectangle.heigth),
         ),
         paragraph != null
             ? Positioned(
@@ -191,12 +146,9 @@ class _EdgeState extends State<Edge> with TickerProviderStateMixin {
                     paragraph.width / 2.0 +
                     paragraph.width / 2.0 * alignment.x +
                     padding.left * alignment.x,
-                child: FadeTransition(
-                  opacity: animation,
-                  child: CustomPaint(
-                    painter: ParagraphPainter(paragraph: paragraph),
-                    size: Size(paragraph.width, paragraph.height),
-                  ),
+                child: CustomPaint(
+                  painter: ParagraphPainter(paragraph: paragraph),
+                  size: Size(paragraph.width, paragraph.height),
                 ),
               )
             : Container(),
