@@ -49,7 +49,7 @@ class EdgePainter extends CustomPainter {
                     (edge.body as Circle).center.y),
                 radius: (edge.body as Circle).radius),
             edge.start.angleOnCircle(edge.body),
-            2 + math.pi - (edge.body as Circle).arc(edge.start, edge.end),
+            2 * math.pi - (edge.body as Circle).arc(edge.start, edge.end),
             false,
             paintStroke)
         : canvas.drawLine(
