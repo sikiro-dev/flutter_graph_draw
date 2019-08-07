@@ -51,7 +51,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: cbdf72fe57f1315de5e085c39baac3c3ac8d60b1
+      resolved-ref: d5da3b016e78add0a16743f736b69899b838f8e8
       url: "https://dlmauri:db7633c414fe78a6578ba892834a0547cc9b163f@github.com/dlmauri/geometry"
     source: git
     version: "0.0.0"
