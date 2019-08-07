@@ -90,14 +90,13 @@ class Edge extends StatelessWidget {
       case EdgeType.Curved:
         {
           mid = Point.clockwise(
-              sourceCenter,
-              targetCenter,
-              Line.fromPoints(pointA: sourceCenter, pointB: targetCenter)
-                  .perpendicular(sourceCenter.midpoint(targetCenter))
-                  .atDistanceFromPoint(sourceCenter.midpoint(targetCenter),
-                      sourceCenter.distanceTo(targetCenter) / ratio),
-              reversed: source.center.wider(target.center) &&
-                  target.center.higher(source.center));
+            sourceCenter,
+            targetCenter,
+            Line.fromPoints(pointA: sourceCenter, pointB: targetCenter)
+                .perpendicular(sourceCenter.midpoint(targetCenter))
+                .atDistanceFromPoint(sourceCenter.midpoint(targetCenter),
+                    sourceCenter.distanceTo(targetCenter) / ratio),
+          );
           tip = mid.closer(Circle.fromTreePoints(
                   pointA: sourceCenter, pointB: mid, pointC: targetCenter)
               .intersect(Circle(center: targetCenter, radius: target.radius)));
