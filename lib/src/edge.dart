@@ -96,7 +96,8 @@ class Edge extends StatelessWidget {
                   .perpendicular(sourceCenter.midpoint(targetCenter))
                   .atDistanceFromPoint(sourceCenter.midpoint(targetCenter),
                       sourceCenter.distanceTo(targetCenter) / ratio),
-              reversed: source.center.wider(target.center));
+              reversed: source.center.wider(target.center) &&
+                  target.center.higher(source.center));
           tip = mid.closer(Circle.fromTreePoints(
                   pointA: sourceCenter, pointB: mid, pointC: targetCenter)
               .intersect(Circle(center: targetCenter, radius: target.radius)));
