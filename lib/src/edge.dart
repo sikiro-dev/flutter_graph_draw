@@ -40,7 +40,7 @@ class Edge extends StatelessWidget {
       this.alignment = Alignment.centerRight,
       this.padding = const EdgeInsets.all(2.0)})
       : assert(source != null),
-        assert(ratio >= 10.0 && ratio <= 50.0),
+        assert(ratio >= 0.0),
         assert(arrowWidth >= 0.0),
         assert(target != null);
 
