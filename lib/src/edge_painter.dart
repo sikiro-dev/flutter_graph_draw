@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:geometry/geometry.dart';
+import 'package:geometry_kp/geometry.dart';
 
 ///extends CustomPainter and draw an edge
 ///

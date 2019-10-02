@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_graph_draw/src/paragraph_painter.dart';
-import 'package:geometry/geometry.dart';
+import 'package:geometry_kp/geometry.dart';
 
 ///rapresent a single node of the graph
 ///

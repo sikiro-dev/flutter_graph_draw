@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geometry/geometry.dart';
+import 'package:geometry_kp/geometry.dart';
 import 'package:flutter_graph_draw/src/node.dart';
 import 'package:flutter_graph_draw/src/paragraph_painter.dart';
 import 'package:flutter_graph_draw/src/edge_painter.dart';
